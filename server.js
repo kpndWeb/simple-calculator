@@ -1,3 +1,5 @@
+require('dotenv').config();
+const db = require('./db');
 const express = require('express');
 const path = require('path');
 
@@ -6,6 +8,7 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.static(path.join(__dirname, 'public')));
 
+// doing calculations
 app.get('/api/calculate', (req, res) => {
   const { a, b, op } = req.query;
   let result;
@@ -29,6 +32,30 @@ app.get('/api/calculate', (req, res) => {
   }
 
   res.json({ result });
+});
+
+// store calculations
+app.post('/api/log', express.json(), async (req, res) => {
+  const { expression, result } = req.body;
+
+  if (!expression || result === undefined) {
+    return res.status(400).json({ error: 'Missing expression or result' });
+  }
+
+  try {
+    const query = `
+      INSERT INTO calculations (expression, result)
+      VALUES ($1, $2)
+      RETURNING id, created_at;
+    `;
+    const values = [expression, parseFloat(result)];
+    
+    const { rows } = await db.query(query, values);
+    res.status(201).json({ success: true, id: rows[0].id });
+  } catch (err) {
+    console.error('DB log error:', err);
+    res.status(500).json({ error: 'Failed to log calculation' });
+  }
 });
 
 app.listen(PORT, () => {
