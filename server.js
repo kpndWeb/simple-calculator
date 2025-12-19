@@ -58,6 +58,49 @@ app.post('/api/log', express.json(), async (req, res) => {
   }
 });
 
+// fetch recent calculations
+app.get('/api/history', async (req, res) => {
+  try {
+    const query = `
+      SELECT id, expression, result, created_at
+      FROM calculations
+      ORDER BY created_at DESC
+      LIMIT 20;
+    `;
+    const { rows } = await db.query(query);
+    
+    // Format timestamp for frontend ("2025-12-19 14:30")
+    const history = rows.map(row => ({
+      ...row,
+      created_at: new Date(row.created_at).toLocaleString('en-GB', {
+        year: '2-digit',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      }).replace(',', '')
+    }));
+
+    res.json({ history });
+  } catch (err) {
+    console.error('History fetch error:', err);
+    res.status(500).json({ error: 'Failed to fetch history' });
+  }
+});
+
+// delete all calculation history
+app.post('/api/history/clear', async (req, res) => {
+  try {
+    const result = await db.query('DELETE FROM calculations');
+    console.log(`🗑️ Cleared ${result.rowCount} calculation(s)`);
+    res.json({ success: true, deleted: result.rowCount });
+  } catch (err) {
+    console.error('Clear history error:', err);
+    res.status(500).json({ error: 'Failed to clear history' });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`✅ Server running at http://localhost:${PORT}`);
 });

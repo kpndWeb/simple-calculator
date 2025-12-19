@@ -36,23 +36,7 @@ function backspace() {
     }
 }
 
-// function calculate() {
-//     try {
-//         const expr = display.value
-//         .replace(/×/g, '*')
-//         .replace(/÷/g, '/')
-//         .replace(/−/g, '-');
-
-//         const result = Function(`"use strict"; return (${expr})`)();
-
-//         display.value = Number.isInteger(result) ? result: parseFloat(result.toFixed(10));
-//     } catch (e) {
-//         display.value = 'Error';
-//         setTimeout(clearDisplay, 1500);
-//     }
-//     clickEqual = true;
-// }
-
+// function for calculation
 async function calculate() {
     try {
         const originalExpr = display.value;
@@ -74,6 +58,7 @@ async function calculate() {
     }
 }
 
+// function for logging history
 async function logCalculation(expression, result) {
     try {
         const response = await fetch('/api/log', {
@@ -89,6 +74,86 @@ async function logCalculation(expression, result) {
             console.warn('⚠️ Log request failed:', err.message);
     }
 }
+
+// HISTORY PANEL
+const toggleBtn = document.getElementById('toggleHistory');
+const closeBtn = document.getElementById('closeHistory');
+const drawer = document.getElementById('historyDrawer');
+const historyList = document.getElementById('historyList');
+
+// Toggle drawer
+toggleBtn.addEventListener('click', () => drawer.classList.add('open'));
+closeBtn.addEventListener('click', () => drawer.classList.remove('open'));
+
+// Fetch & display history
+async function loadHistory() {
+  try {
+    const res = await fetch('/api/history');
+    const { history } = await res.json();
+
+    if (history.length === 0) {
+      historyList.innerHTML = '<p class="history-empty">No calculations yet.</p>';
+      return;
+    }
+
+    historyList.innerHTML = history.map(item => `
+      <div class="history-item" data-expr="${item.expression}">
+        <div class="expr">${item.expression.replace(/\*/g, '×').replace(/\//g, '÷')}</div>
+        <div class="result">= ${item.result}</div>
+        <div class="time">${item.created_at}</div>
+      </div>
+    `).join('');
+
+    // Make items clickable
+    document.querySelectorAll('.history-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const expr = item.getAttribute('data-expr');
+        display.value = expr;
+        drawer.classList.remove('open');
+      });
+    });
+  } catch (err) {
+    console.warn('Failed to load history:', err);
+    historyList.innerHTML = '<p class="history-empty">⚠️ Could not load history.</p>';
+  }
+}
+
+// Auto-load on startup & after each calculation
+document.addEventListener('DOMContentLoaded', loadHistory);
+
+// Enhance calculate() to refresh history
+const originalCalculate = calculate;
+calculate = function() {
+  originalCalculate();
+  setTimeout(loadHistory, 300);
+};
+
+// Clear History Button
+document.getElementById('clearHistory').addEventListener('click', async () => {
+  // ✅ Confirm first — prevent accidental loss
+  if (!confirm('⚠️ Clear all calculation history? This cannot be undone.')) {
+    return;
+  }
+
+  try {
+    const res = await fetch('/api/history/clear', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' }
+    });
+
+    if (res.ok) {
+      // 🎉 Success: reload history (will show "No calculations")
+      loadHistory();
+      // Optional: show toast (for now, rely on UI update)
+    } else {
+      const { error } = await res.json();
+      alert(`❌ Failed to clear: ${error}`);
+    }
+  } catch (err) {
+    console.error('Clear request failed:', err);
+    alert('❌ Network error. Is the server running?');
+  }
+});
 
     // kryboard support
 document.addEventListener('keydown', (e) => {

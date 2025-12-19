@@ -9,7 +9,25 @@
 <body>
   <div class="calculator">
     <h1>🧮 Simple Calculator</h1>
+    <!-- History Toggle Button -->
+    <button id="toggleHistory" class="history-toggle">🕒 History</button>
+
+    <!-- History Drawer -->
+    <div id="historyDrawer" class="history-drawer">
+      <button id="closeHistory">Close</button>
+      <div class="history-header">
+        <h3>Calculation History</h3>
+        <button id="clearHistory" class="clear-history-btn" title="Clear History"><i class="ri-delete-bin-2-fill"></i></button>
+      </div>
+      <div id="historyList" class="history-list">
+        <p class="history-empty">No calculations yet.</p>
+      </div>
+    </div>
+
+    <!-- calculator display -->
     <input type="text" id="display" readonly placeholder="0">
+
+    <!-- buttons -->
     <div class="buttons">
         <button class="clear" onclick="clearDisplay()">C</button>
         <button onclick="appendToDisplay('/')">÷</button>

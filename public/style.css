@@ -1,5 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.css');
+
+:root {
+  --appFont: "Nunito Sans", sans-serif;
+}
+
 body {
-  font-family: Arial, sans-serif;
+  font-family: var(--appFont);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -53,4 +60,127 @@ button.equals {
 
 button.clear {
   background: #a5a5a5;
+}
+
+/* History Toggle Button */
+.history-toggle {
+  font-family: var(--appFont);
+  font-weight: 500;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 6px 12px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  z-index: 10;
+  width: 100px;
+  height: 45px;
+}
+
+/* History Drawer (off-screen by default) */
+.history-drawer {
+  position: fixed;
+  top: 0;
+  right: -320px; /* hidden */
+  width: 300px;
+  height: 100vh;
+  background: white;
+  box-shadow: -4px 0 10px rgba(0,0,0,0.1);
+  transition: right 0.3s ease;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+}
+
+.history-drawer.open {
+  right: 0;
+}
+
+#closeHistory {
+  width: 250px;
+  align-self: center;
+  height: 50px;
+  margin: 10px;
+  background: #333;
+}
+
+#closeHistory:hover {
+ background-color: #888;
+}
+
+.history-header {
+  padding: 16px;
+  background: #f5f5f5;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+}
+
+.history-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.history-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+}
+
+.history-item {
+  padding: 12px;
+  border-bottom: 1px solid #f0f0f0;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.history-item:hover {
+  background: #f9f9f9;
+}
+
+.history-item .expr {
+  font-family: var(--appFont);
+  font-size: 1.1rem;
+  color: #333;
+}
+
+.history-item .result {
+  font-weight: bold;
+  color: #2196F3;
+}
+
+.history-item .time {
+  font-size: 0.8rem;
+  color: #888;
+  margin-top: 4px;
+}
+
+.history-empty {
+  text-align: center;
+  color: #999;
+  margin-top: 40px;
+}
+
+/* clear history */
+.clear-history-btn {
+  background: #f44336;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+}
+
+.clear-history-btn:hover {
+  background: #d32f2f;
 }
