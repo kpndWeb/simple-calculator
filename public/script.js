@@ -1,4 +1,47 @@
 const display = document.getElementById('display');
+
+// Theme system
+const themeToggle = document.getElementById('themeToggle');
+
+// Get user preference (localStorage > system > default light)
+function getPreferredTheme() {
+  const saved = localStorage.getItem('theme');
+  if (saved) return saved;
+  
+  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    return 'dark';
+  }
+  return 'light';
+}
+
+// Apply theme
+function setTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem('theme', theme);
+  
+  // Update icon
+  themeToggle.textContent = theme === 'dark' ? '☀️' : '🌙';
+}
+
+// Initialize
+const initialTheme = getPreferredTheme();
+setTheme(initialTheme);
+
+// Toggle on click
+themeToggle.addEventListener('click', () => {
+  const newTheme = document.documentElement.getAttribute('data-theme') === 'dark' 
+    ? 'light' 
+    : 'dark';
+  setTheme(newTheme);
+});
+
+// Optional: Watch system changes (advanced)
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+  if (!localStorage.getItem('theme')) {
+    setTheme(e.matches ? 'dark' : 'light');
+  }
+});
+
 let clickEqual = false;
 
 function ATD(value) {

@@ -3,6 +3,39 @@
 
 :root {
   --appFont: "Nunito Sans", sans-serif;
+  --bg-primary: #f8f9fa;
+  --bg-secondary: white;
+  --text-primary: #212529;
+  --text-secondary: #6c757d;
+  --border-color: #e0e0e0;
+  --btn-default: #343a40;
+  --btn-default-hover: #23272b;
+  --btn-operator: #ff9500;
+  --btn-operator-hover: #e08500;
+  --btn-clear: #6c757d;
+  --btn-clear-hover: #5a6268;
+  --shadow: 0 4px 12px rgba(0,0,0,0.08);
+  --transition: all 0.3s ease;
+}
+
+/* Dark Theme */
+[data-theme="dark"] {
+  --bg-primary: #121212;
+  --bg-secondary: #1e1e1e;
+  --text-primary: #f8f9fa;
+  --text-secondary: #adb5bd;
+  --border-color: #333;
+  --btn-default: #444;
+  --btn-default-hover: #555;
+  --btn-operator: #ff9800;
+  --btn-operator-hover: #ffb74d;
+  --btn-clear: #6c757d;
+  --btn-clear-hover: #868e96;
+  --shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+* {
+  box-sizing: border-box;
 }
 
 body {
@@ -11,62 +44,122 @@ body {
   justify-content: center;
   align-items: center;
   height: 100vh;
+  background: var(--bg-primary);
+  color: var(--text-primary);
   margin: 0;
-  background: #f0f0f0;
+  padding: 20px;
+  min-height: 100vh;
+  transition: var(--transition);
 }
 
 .calculator {
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  background: var(--bg-secondary);
+  padding: 24px;
+  border-radius: 16px;
+  box-shadow: var(--shadow);
   text-align: center;
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  transition: var(--transition);
 }
 
 #display {
   width: 100%;
-  height: 60px;
-  font-size: 1.5rem;
+  height: 72px;
+  font-size: 1.8rem;
   text-align: right;
-  margin-bottom: 10px;
-  padding: 0 10px;
-  box-sizing: border-box;
+  margin-bottom: 16px;
+  padding: 0 16px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  outline: none;
+  transition: var(--transition);
+  letter-spacing: -0.5px;
+}
+
+display:focus {
+  border-color: var(--btn-operator);
+  box-shadow: 0 0 0 2px rgba(255, 149, 0, 0.2);
 }
 
 .buttons {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
+  gap: 12px;
 }
 
 button {
-  height: 60px;
-  font-size: 1.2rem;
+  height: 72px;
+  font-size: 1.4rem;
   cursor: pointer;
   border: none;
-  border-radius: 5px;
-  background: #333;
+  border-radius: 12px;
+  background: var(--btn-default);
   color: white;
+  transition: var(--transition);
+  font-weight: 500;
+  position: relative;
+  overflow: hidden;
+}
+
+button::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255,255,255,0.3);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+button:active {
+  transform: scale(0.96);
+  background: var(--btn-default-hover);
+}
+
+button:active::after {
+  width: 300px;
+  height: 300px;
 }
 
 button.operator {
-  background: #ff9500;
+  background: var(--btn-operator);
+}
+
+button.operator:active,
+button.operator:hover {
+  background: var(--btn-operator-hover);
 }
 
 button.equals {
-  background: #ff9500;
+  background: var(--btn-operator);
   grid-column: span 2;
 }
 
 button.clear {
-  background: #a5a5a5;
+  background: var(--btn-clear);
 }
 
-/* History Toggle Button */
+button.clear:active,
+button.clear:hover {
+  background: var(--btn-clear-hover);
+}
+
+button:hover:not(:disabled) {
+  filter: brightness(1.05);
+}
+
+/* HISTORY TOGGLE BUTTON */
 .history-toggle {
   font-family: var(--appFont);
   font-weight: 500;
-  position: absolute;
+  position: fixed;
   top: 10px;
   right: 10px;
   background: #4CAF50;
@@ -81,19 +174,20 @@ button.clear {
   height: 45px;
 }
 
-/* History Drawer (off-screen by default) */
+/* HISTORY DRAWER */
 .history-drawer {
   position: fixed;
   top: 0;
   right: -320px; /* hidden */
   width: 300px;
   height: 100vh;
-  background: white;
   box-shadow: -4px 0 10px rgba(0,0,0,0.1);
   transition: right 0.3s ease;
   z-index: 100;
   display: flex;
   flex-direction: column;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
 }
 
 .history-drawer.open {
@@ -114,11 +208,12 @@ button.clear {
 
 .history-header {
   padding: 16px;
-  background: #f5f5f5;
   display: flex;
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid #eee;
+  background: var(--bg-primary);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .history-header h3 {
@@ -140,7 +235,11 @@ button.clear {
 }
 
 .history-item:hover {
-  background: #f9f9f9;
+  background: rgba(255,255,255,0.05);
+}
+
+[data-theme="dark"] .history-item:hover {
+  background: rgba(0,0,0,0.1);
 }
 
 .history-item .expr {
@@ -162,11 +261,11 @@ button.clear {
 
 .history-empty {
   text-align: center;
-  color: #999;
+  color: var(--text-secondary);
   margin-top: 40px;
 }
 
-/* clear history */
+/* CLEAR HISTORY */
 .clear-history-btn {
   background: #f44336;
   color: white;
@@ -183,4 +282,31 @@ button.clear {
 
 .clear-history-btn:hover {
   background: #d32f2f;
+}
+
+/* DARK MODE */
+.theme-toggle {
+  position: fixed;
+  top: 15px;
+  right: 150px; /* left of History button */
+  background: none;
+  border: 1px solid black;
+  font-size: 1.2rem;
+  cursor: pointer;
+  z-index: 10;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.theme-toggle:hover {
+  background: rgba(0,0,0,0.05);
+}
+
+.dark .theme-toggle:hover {
+  background: rgba(255,255,255,0.1);
 }
