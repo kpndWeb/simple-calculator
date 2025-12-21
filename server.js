@@ -1,4 +1,9 @@
 require('dotenv').config();
+
+if (process.env.NODE_ENV === 'production') {
+  require('./db/migrate').migrate();
+}
+
 const db = require('./db');
 const express = require('express');
 const path = require('path');
