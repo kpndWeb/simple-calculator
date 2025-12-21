@@ -1,12 +1,11 @@
 require('dotenv').config();
+const db = require('./db');
+const express = require('express');
+const path = require('path');
 
 if (process.env.NODE_ENV === 'production') {
   require('./db/migrate').migrate();
 }
-
-const db = require('./db');
-const express = require('express');
-const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
